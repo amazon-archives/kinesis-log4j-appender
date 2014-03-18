@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2014 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  
+  Licensed under the Apache License, Version 2.0 (the "License").
+  You may not use this file except in compliance with the License.
+  A copy of the License is located at
+  
+   http://aws.amazon.com/apache2.0
+  
+  or in the "license" file accompanying this file. This file is distributed
+  on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+  express or implied. See the License for the specific language governing
+  permissions and limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.amazonaws</groupId>
+  <artifactId>kinesis-log4j-appender</artifactId>
+  <version>1.0.0</version>
+
+  <name>Log4j Appender for pushing logs to Kinesis</name>
+  <url>https://github.com/awslabs/kinesis-log4j-appender.git</url>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <compilerVersion>${java.version}</compilerVersion>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
+          <encoding>${java.source.encoding}</encoding>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <optimize>false</optimize>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>${maven-shade-plugin.version}</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk</artifactId>
+      <version>${aws-java-sdk.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+  </dependencies>
+
+  <properties>
+    <general.encoding>UTF-8</general.encoding>
+    
+    <!-- JAVA -->
+    <java.version>1.7</java.version>
+    <java.source.encoding>${general.encoding}</java.source.encoding>
+    <aws-java-sdk.version>1.7.0</aws-java-sdk.version>
+    <log4j.version>1.2.16</log4j.version>
+    <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+    <maven-shade-plugin.version>2.2</maven-shade-plugin.version>
+  </properties>
+</project>
