@@ -4,3 +4,10 @@
 *.jar
 *.war
 *.ear
+
+#intellij files
+.idea/
+*.iml
+*.iws
+
+dependency-reduced-pom.xml
