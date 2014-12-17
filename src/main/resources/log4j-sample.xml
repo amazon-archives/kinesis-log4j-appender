@@ -40,6 +40,13 @@
     <param name="threadCount" value="20" />
     <!--optional, defaults to 30 seconds-->
     <param name="shutdownTimeout" value="30" />
+    <!-- optional, defaults to kinesis.us-east-1.amazonaws.com or -->
+    <!-- Amazon Kinesis endpoint in the configured ".region". -->
+    <!-- If configured, this endpoint is used instead of the default-->
+    <!-- Amazon Kinesis endpoint in the configured ".region"-->
+    <param name="endpoint" value="kinesis.us-east-1.amazonaws.com" />
+    <!--optional, defaults to us-east-1-->
+    <param name="region" value="us-east-1" />
   </appender>
 
   <logger name="KinesisLogger" additivity="false">

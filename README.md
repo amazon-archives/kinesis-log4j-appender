@@ -29,7 +29,8 @@ Note that the current implementation doesn't insert records in the same order as
 | log4j.appender.[APPENDER_NAME].threadCount | 20 | Number of parallel threads for publishing logs to configured Kinesis stream
 | log4j.appender.[APPENDER_NAME].bufferSize | 2000 | Maximum number of outstanding log messages to keep in memory
 | log4j.appender.[APPENDER_NAME].shutdownTimeout | 30 | Seconds to send buffered messages before application JVM quits normally
-
+| log4j.appender.[APPENDER_NAME].endpoint | kinesis.us-east-1.amazonaws.com | Amazon Kinesis endpoint to make requests to, if configured this overrides default endpoint for the configured region
+| log4j.appender.[APPENDER_NAME].region | us-east-1 | Amazon Kinesis endpoint in this configured region will be used for making requests unless overridden by log4j.appender.[APPENDER_NAME].endpoint
 
 ## Recommendations/Information
 
