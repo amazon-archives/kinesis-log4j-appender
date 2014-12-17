@@ -27,6 +27,8 @@ import org.apache.log4j.spi.ErrorCode;
 import org.apache.log4j.spi.LoggingEvent;
 
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.regions.Region;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.retry.PredefinedRetryPolicies;
 import com.amazonaws.retry.RetryPolicy;
 import com.amazonaws.services.kinesis.AmazonKinesisAsyncClient;
@@ -53,6 +55,8 @@ public class KinesisAppender extends AppenderSkeleton {
   private int bufferSize = AppenderConstants.DEFAULT_BUFFER_SIZE;
   private int threadCount = AppenderConstants.DEFAULT_THREAD_COUNT;
   private int shutdownTimeout = AppenderConstants.DEFAULT_SHUTDOWN_TIMEOUT_SEC;
+  private String endpoint;
+  private String region;
   private String streamName;
   private boolean initializationFailed = false;
   private BlockingQueue<Runnable> taskBuffer;
@@ -60,7 +64,6 @@ public class KinesisAppender extends AppenderSkeleton {
   private AsyncPutCallStatsReporter asyncCallHander;
 
   private void error(String message) {
-
     error(message, null);
   }
 
@@ -105,6 +108,24 @@ public class KinesisAppender extends AppenderSkeleton {
     threadPoolExecutor.prestartAllCoreThreads();
     kinesisClient = new AmazonKinesisAsyncClient(new CustomCredentialsProviderChain(), clientConfiguration,
         threadPoolExecutor);
+
+    boolean regionProvided = !Validator.isBlank(region);
+    if (!regionProvided) {
+      region = AppenderConstants.DEFAULT_REGION;
+    }
+    if (!Validator.isBlank(endpoint)) {
+      if (regionProvided) {
+	LOGGER
+	    .warn("Received configuration for both region as well as Amazon Kinesis endpoint. ("
+		+ endpoint
+		+ ") will be used as endpoint instead of default endpoint for region ("
+		+ region + ")");
+      }
+      kinesisClient.setEndpoint(endpoint,
+	  AppenderConstants.DEFAULT_SERVICE_NAME, region);
+    } else {
+      kinesisClient.setRegion(Region.getRegion(Regions.fromName(region)));
+    }
 
     DescribeStreamResult describeResult = null;
     try {
@@ -328,5 +349,47 @@ public class KinesisAppender extends AppenderSkeleton {
    */
   public int getTaskBufferSize() {
     return taskBuffer.size();
+  }
+
+  /**
+   * Returns configured Kinesis endpoint.
+   * 
+   * @return configured kinesis endpoint
+   */
+  public String getEndpoint() {
+    return endpoint;
+  }
+
+  /**
+   * Set kinesis endpoint. If set, it overrides the default kinesis endpoint in
+   * the configured region
+   * 
+   * @param endpoint
+   *          kinesis endpoint to which requests should be made.
+   */
+  public void setEndpoint(String endpoint) {
+    this.endpoint = endpoint;
+  }
+
+  /**
+   * Returns configured region for Kinesis.
+   * 
+   * @return configured region for Kinesis
+   */
+  public String getRegion() {
+    return region;
+  }
+
+  /**
+   * Configures the region and default endpoint for all Kinesis calls. If not
+   * overridden by {@link #setEndpoint(String)}, all Kinesis requests are made
+   * to the default endpoint in this region.
+   * 
+   * @param region
+   *          the Kinesis region whose endpoint should be used for kinesis
+   *          requests
+   */
+  public void setRegion(String region) {
+    this.region = region;
   }
 }
