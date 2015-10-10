@@ -38,6 +38,17 @@ We recommend that customers:
 * Configure an additional appender (for example: DailyRollingFileAppender), so that they will retain logs even in the rare cases when the log entries may not be successfully sent to Amazon Kinesis.
 * Pick a shutdownTimeout that allows the appender to send all outstanding log entries to Amazon Kinesis before exiting.
 
+## Proxy Configuration
+
+For customers who connect to the Internet through a proxy server, the Log4J
+Appender for Amazon Kinesis will pick up the [Java proxy system
+properties](https://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html)
+and update the underlying ClientConfiguration instance.
+
+Supported system properies are http.proxyHost, http.proxyPort, http.proxyUser,
+http.proxyPassword, and http.auth.ntlm.domain. For NTLM authentication on Windows, the
+COMPUTERNAME environment variable is used to set the proxy workstation.
+
 ## Building from source
 * Download and install [Apache Maven 3.x](http://maven.apache.org/download.cgi)
 * Clone this github repository to a new directory (e.g. by default, this is `kinesis-log4j-appender`) by using following `git` command on shell prompt:
@@ -50,7 +61,7 @@ We recommend that customers:
 
   ```properties
   ------
-  [INFO] 
+  [INFO]
   ------
   [INFO] ------------------------------------------------------------------------
   [INFO] BUILD SUCCESS
@@ -76,7 +87,7 @@ We recommend that customers:
 
   On Mac OS X/Linux/Unix:
   ```bash
-  ${JAVA_HOME}/bin/java -cp .:./kinesis-log4j-appender-1.0.0.jar com.amazonaws.services.kinesis.log4j.FilePublisher <path_to_sample_log_file> 
+  ${JAVA_HOME}/bin/java -cp .:./kinesis-log4j-appender-1.0.0.jar com.amazonaws.services.kinesis.log4j.FilePublisher <path_to_sample_log_file>
   ```
   On Windows:
   ```bat
