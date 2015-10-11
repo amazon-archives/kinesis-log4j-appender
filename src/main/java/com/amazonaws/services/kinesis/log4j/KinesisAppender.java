@@ -73,6 +73,49 @@ public class KinesisAppender extends AppenderSkeleton {
     throw new IllegalStateException(message, e);
   }
 
+    /**
+     * Set proxy configuration based on system properties. Some of the properties are standard
+     * properties documented by Oracle (http.proxyHost, http.proxyPort, http.auth.ntlm.domain),
+     * and others are from common convention (http.proxyUser, http.proxyPassword).
+     *
+     * Finally, for NTLM authentication the workstation name is taken from the environment as
+     * COMPUTERNAME. We set this on the client configuration only if the NTLM domain was specified.
+     */
+    private ClientConfiguration setProxySettingsFromSystemProperties(ClientConfiguration clientConfiguration) {
+
+        final String proxyHost = System.getProperty("http.proxyHost");
+        if(proxyHost != null) {
+            clientConfiguration.setProxyHost(proxyHost);
+        }
+
+        final String proxyPort = System.getProperty("http.proxyPort");
+        if(proxyPort != null) {
+            clientConfiguration.setProxyPort(Integer.parseInt(proxyPort));
+        }
+
+        final String proxyUser = System.getProperty("http.proxyUser");
+        if(proxyUser != null) {
+            clientConfiguration.setProxyUsername(proxyUser);
+        }
+
+        final String proxyPassword = System.getProperty("http.proxyPassword");
+        if(proxyPassword != null) {
+            clientConfiguration.setProxyPassword(proxyPassword);
+        }
+
+        final String proxyDomain = System.getProperty("http.auth.ntlm.domain");
+        if(proxyDomain != null) {
+            clientConfiguration.setProxyDomain(proxyDomain);
+        }
+
+        final String workstation = System.getenv("COMPUTERNAME");
+        if(proxyDomain != null && workstation != null) {
+            clientConfiguration.setProxyWorkstation(workstation);
+        }
+
+        return clientConfiguration;
+    }
+
   /**
    * Configures this appender instance and makes it ready for use by the
    * consumers. It validates mandatory parameters and confirms if the configured
@@ -97,6 +140,8 @@ public class KinesisAppender extends AppenderSkeleton {
     }
 
     ClientConfiguration clientConfiguration = new ClientConfiguration();
+    clientConfiguration = setProxySettingsFromSystemProperties(clientConfiguration);
+
     clientConfiguration.setMaxErrorRetry(maxRetries);
     clientConfiguration.setRetryPolicy(new RetryPolicy(PredefinedRetryPolicies.DEFAULT_RETRY_CONDITION,
         PredefinedRetryPolicies.DEFAULT_BACKOFF_STRATEGY, maxRetries, true));
